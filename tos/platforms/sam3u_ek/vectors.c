@@ -38,6 +38,8 @@
 /* Section symbols defined in linker script
  * sam3u-ek-flash.x
  */
+#include "AT91SAM3U4.h"
+
 extern unsigned int _stext;
 extern unsigned int _etext;
 extern unsigned int _sdata;
@@ -187,6 +189,9 @@ void __init()
 		*i = 0;
 		i++;
 	}
+
+    from = (unsigned int *)&_stext;
+    AT91C_BASE_NVIC->NVIC_VTOFFR = ((unsigned int)(from)) | (0x0 << 7);
 
 	// Call main()
 	main();

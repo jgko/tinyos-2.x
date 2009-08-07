@@ -70,7 +70,7 @@
 #ifndef AT91SAM3U4_H
 #define AT91SAM3U4_H
 
-typedef volatile uint32_t AT91_REG;// Hardware register definition
+typedef volatile unsigned int AT91_REG;// Hardware register definition
 #define AT91_CAST(a) (a)
 
 // *****************************************************************************
