@@ -30,8 +30,9 @@ module HalSam3uRttP @safe()
 {
     provides {
         interface Init;
-        interface Alarm<TMilli,uint32_t> as Alarm;
-        interface LocalTime<TMilli> as LocalTime;
+        interface Alarm<T32khz,uint32_t> as Alarm;
+        interface LocalTime<T32khz> as LocalTime;
+        interface LocalTime<TMilli> as LocalTimeMilli;
     }
     uses {
         interface HplSam3uRtt;
@@ -48,9 +49,9 @@ implementation
         running = FALSE;
 
         call RttInit.init();
-        // make the counter count in milliseconds. This restarts the RTT and
+        // make the counter count in T32kHz This restarts the RTT and
         // resets the counter.
-        call HplSam3uRtt.setPrescaler(32);
+        call HplSam3uRtt.setPrescaler(1);
         return SUCCESS;
     }
 
@@ -78,7 +79,7 @@ implementation
             uint32_t elapsed = now-t0;
             if(elapsed >= dt )
             {
-                // l.et the timer expire at the next tic of the RTT
+                // let the timer expire at the next tic of the RTT
                 call HplSam3uRtt.setAlarm(now+1);
             } else {
                 uint32_t remaining = dt - elapsed;
@@ -110,6 +111,11 @@ implementation
     async command uint32_t LocalTime.get()
     {
         return call Alarm.getNow();
+    }
+
+    async command uint32_t LocalTimeMilli.get()
+    {
+        return (call Alarm.getNow()) >> 5;
     }
 
     async event void HplSam3uRtt.alarmFired() 

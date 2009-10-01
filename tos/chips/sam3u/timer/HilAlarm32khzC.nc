@@ -19,24 +19,32 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  */
 
-/**
- * AlarmMilliC is the alarm for async millisecond alarms
- *
+/** 
  * @author Thomas Schmid
+ *
  */
- 
-generic configuration AlarmMilliC()
+
+#include "Timer.h"
+
+configuration HilAlarm32khzC
 {
   provides 
   {
       interface Init;
-      interface Alarm<TMilli,uint32_t>;
+      interface Alarm<T32khz,uint32_t> as Alarm[ uint8_t num ];
+      interface LocalTime<T32khz>;
   }
 }
+
 implementation
 {
-  components HalSam3uRttC as AlarmC;
+  components new VirtualizeAlarmC(T32khz, uint32_t, uniqueCount(UQ_ALARM_32KHZ)) as VirtAlarm32khz;
+  components new AlarmT32khzC() as Alarm32khzC;
+  components HalSam3uRttC;
 
-  Init = AlarmC;
-  Alarm = AlarmC;
+  Init = Alarm32khzC;
+  Alarm = VirtAlarm32khz.Alarm;
+  LocalTime = HalSam3uRttC;
+  
+  VirtAlarm32khz.AlarmFrom -> Alarm32khzC.Alarm;
 }

@@ -3,8 +3,9 @@ configuration HalSam3uRttC
     provides
     {
         interface Init;
-        interface Alarm<TMilli,uint32_t> as Alarm;
-        interface LocalTime<TMilli> as LocalTime;
+        interface Alarm<T32khz,uint32_t> as Alarm;
+        interface LocalTime<T32khz> as LocalTime;
+        interface LocalTime<TMilli> as LocalTimeMilli;
     }
 }
 
@@ -17,7 +18,8 @@ implementation
 
     Init = HalSam3uRttP;
     Alarm = HalSam3uRttP;
-    LocalTime = HalSam3uRttP;
+    LocalTime = HalSam3uRttP.LocalTime;
+    LocalTimeMilli = HalSam3uRttP.LocalTimeMilli;
 }    
 
 

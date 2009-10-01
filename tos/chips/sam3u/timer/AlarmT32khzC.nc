@@ -19,39 +19,24 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  */
 
-/** 
- * @author Thomas Schmid
+/**
+ * AlarmT32khzC is the alarm for async 32khz alarms
  *
+ * @author Thomas Schmid
  */
-
-#include "Timer.h"
-#include "Alarm.h"
-
-configuration HilTimerMilliC
+ 
+generic configuration AlarmT32khzC()
 {
   provides 
   {
       interface Init;
-      interface Timer<TMilli> as TimerMilli[ uint8_t num ];
-      interface LocalTime<TMilli>;
+      interface Alarm<T32khz,uint32_t>;
   }
 }
-
 implementation
 {
-  components new VirtualizeTimerC(TMilli,uniqueCount(UQ_TIMER_MILLI)) as VirtTimersMilli32;
-  components new AlarmToTimerC(TMilli) as AlarmToTimerMilli32;
-  components HilAlarm32khzC;
-  components new TransformAlarmSimpleC(TMilli, T32khz, 5) as Transform;
-  components HalSam3uRttC;
+  components HalSam3uRttC as AlarmC;
 
-
-  Init = HilAlarm32khzC;
-  TimerMilli = VirtTimersMilli32.Timer;
-  LocalTime = HalSam3uRttC.LocalTimeMilli;
-
-  Transform.AlarmFrom -> HilAlarm32khzC.Alarm[unique(UQ_ALARM_32KHZ)];
-  
-  VirtTimersMilli32.TimerFrom -> AlarmToTimerMilli32.Timer;
-  AlarmToTimerMilli32.Alarm -> Transform.Alarm;
+  Init = AlarmC;
+  Alarm = AlarmC;
 }
