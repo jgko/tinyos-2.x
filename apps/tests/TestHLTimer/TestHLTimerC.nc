@@ -51,6 +51,8 @@ implementation
     enum {
         RX_TCH_LABEL = 30, // RX label position
         RX_TCH_VALUE = 50, // RX value position
+        RX_TP_LABEL = 110,
+        RX_TP_VALUE = 130,
         RX_TCCR_LABEL = 70,
         RX_TCCR_VALUE = 90,
     };
@@ -68,9 +70,9 @@ implementation
     task void transferTCCRPacketTask()
     {
 
-        tx_packet.rxreg = 1;
-        tx_packet.txreg = 0;
-        tx_packet.reg = 16e7;
+        tx_packet.rxreg = 3;
+        tx_packet.txreg = 1;
+        tx_packet.reg = 160000000;
 
         call SpiControl.start();
 
@@ -137,6 +139,14 @@ implementation
                             break;
                         }
                     case 2:
+                        {
+                            // received Period
+                            call Draw.drawStringWithBGColor(10, RX_TP_LABEL, "RX TP", COLOR_BLACK, COLOR_WHITE);
+                            call Draw.drawRectangle(0, RX_TP_VALUE, BOARD_LCD_WIDTH, 14, COLOR_WHITE);
+                            call Draw.drawIntWithBGColor(BOARD_LCD_WIDTH-20, RX_TCH_VALUE, (uint32_t)rx->reg, 1, COLOR_BLACK, COLOR_WHITE);
+                            break;
+                        }
+                    case 3:
                         {
                             // received TCH
                             call Draw.drawStringWithBGColor(10, RX_TCH_LABEL, "RX TCH", COLOR_BLACK, COLOR_WHITE);
